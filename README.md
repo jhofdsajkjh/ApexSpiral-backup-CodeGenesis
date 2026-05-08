@@ -31,6 +31,14 @@
 | Δ_ctx | 上下文维护 | 短上下文补偿 |
 | Σ_conv | 收敛判定 | 进化收敛检测 |
 
+## 技术生态融合
+
+- APEX璇玑演化体系
+- Andrej Karpathy 工程思想
+- Claude Superpowers
+- AutoResearch
+- agent-skills (Addy Osmani 3w+ Star)：AI编码全流程标准工作流 /spec /plan /build /test /review 工程化门禁
+
 ## 快速开始
 
 ```bash
@@ -62,6 +70,7 @@ print(f"Φ_code = {result.value}")
 - ✅ 35个测试100%通过
 - ✅ 无模拟无幻觉
 - ✅ 适用各类平台
+- ✅ Addy Osmani agent-skills 全工程化流程融合
 
 ## 适用场景
 
