@@ -118,3 +118,105 @@ class TestCodeQualityReport:
             sigma_converge=False
         )
         assert not report.is_production_ready()
+
+
+class TestThetaBreak:
+    """Θ_break 断点防护公式测试"""
+
+    def test_normal_case(self):
+        """正常情况"""
+        result = CodeGenesis.calc_theta_break(coverage=0.9, depth=0.85, safety=0.95)
+        assert result.is_valid
+        assert 0.6 < result.value < 0.8
+
+    def test_full_coverage(self):
+        """全覆盖情况"""
+        result = CodeGenesis.calc_theta_break(coverage=1.0, depth=1.0, safety=1.0)
+        assert result.value == 1.0
+
+    def test_zero_safety(self):
+        """零安全系数"""
+        result = CodeGenesis.calc_theta_break(coverage=0.9, depth=0.85, safety=0.0)
+        assert result.value == 0.0
+
+
+class TestGammaTask:
+    """Γ_task 任务分解公式测试"""
+
+    def test_normal_case(self):
+        """正常情况"""
+        result = CodeGenesis.calc_gamma_task(decompose=0.8, parallel=0.85, quality=0.9)
+        assert result.is_valid
+        assert 0.5 < result.value < 0.7
+
+    def test_optimal_case(self):
+        """最优情况"""
+        result = CodeGenesis.calc_gamma_task(decompose=1.0, parallel=1.0, quality=1.0)
+        assert result.value == 1.0
+
+    def test_zero_decompose(self):
+        """零分解率"""
+        result = CodeGenesis.calc_gamma_task(decompose=0.0, parallel=0.85, quality=0.9)
+        assert result.value == 0.0
+
+
+class TestLambdaEvol:
+    """Λ_evol 进化系数公式测试"""
+
+    def test_normal_case(self):
+        """正常情况"""
+        result = CodeGenesis.calc_lambda_evol(selection=0.85, mutation=0.9, crossover=0.88)
+        assert result.is_valid
+        assert 0.5 < result.value < 0.8
+
+    def test_optimal_case(self):
+        """最优情况"""
+        result = CodeGenesis.calc_lambda_evol(selection=1.0, mutation=1.0, crossover=1.0)
+        assert result.value == 1.0
+
+    def test_zero_mutation(self):
+        """零变异率"""
+        result = CodeGenesis.calc_lambda_evol(selection=0.85, mutation=0.0, crossover=0.88)
+        assert result.value == 0.0
+
+
+class TestDeltaCtx:
+    """Δ_ctx 上下文维护公式测试"""
+
+    def test_normal_case(self):
+        """正常情况"""
+        result = CodeGenesis.calc_delta_ctx(compress=0.85, sequence=0.9, chunk=0.8, retain=0.88)
+        assert result.is_valid
+        assert 0.4 < result.value < 0.7
+
+    def test_full_retention(self):
+        """全保留情况"""
+        result = CodeGenesis.calc_delta_ctx(compress=1.0, sequence=1.0, chunk=1.0, retain=1.0)
+        assert result.value == 1.0
+
+    def test_zero_compress(self):
+        """零压缩率"""
+        result = CodeGenesis.calc_delta_ctx(compress=0.0, sequence=0.9, chunk=0.8, retain=0.88)
+        assert result.value == 0.0
+
+
+class TestSigmaConverge:
+    """Σ_conv 收敛判定公式测试"""
+
+    def test_converged(self):
+        """已收敛情况"""
+        result = CodeGenesis.calc_sigma_converge(delta_prev=1.0, delta_curr=1.0005, threshold=0.001)
+        assert result.is_valid
+        assert result.value < 0.001
+
+    def test_not_converged(self):
+        """未收敛情况"""
+        result = CodeGenesis.calc_sigma_converge(delta_prev=1.0, delta_curr=1.5, threshold=0.001)
+        assert not result.is_valid
+        assert result.warning == "未收敛"
+
+    def test_exact_zero(self):
+        """完全相等"""
+        result = CodeGenesis.calc_sigma_converge(delta_prev=0.5, delta_curr=0.5, threshold=0.001)
+        assert result.is_valid
+        assert result.value == 0.0
